@@ -1,0 +1,153 @@
+<a name="api"> </a>
+<h1>Instructions</h1>
+
+<p>This service is based on waterfall and hail area data stored in database. The data has been calculated by Finnish Meteorological Institute (FMI) by using their weather radar observations. The calculation process is not perfect and there is also radar interference in the database data. For now, there is data only from the year 2013 in the database. The accuracy of the data is in the scale of 0.5 kilometers.</p>
+
+<p>The FMI radar locations are visible on the map. A specific radar may be chosen either from the map or from the <strong>Radar</strong> list. The area of interest on the map can be zoomed in and out.</p>
+
+<p><strong>Min area </strong>defines the minimum area of clouds, this helps to filter out all sorts of interference, such as marine vessels. The data is divided according to radar measuring angle.</p>
+
+<h3>&nbsp;</h3>
+
+<h3>WFS service</h3>
+
+<p>TutkaUI database is also available as WFS service, for data download. WFS web service enables HTTP GET and POST request to data. The request may be done in a web browser or with GIS-software, for example ArcGIS, MapInfo or QGIS. General descriptions and instructions for using OGC standard WMS and WFS services can be found from CSC's geosciences <a href="https://research.csc.fi/gis-guidelines">guidelines page </a>(look for&nbsp; Rajapintapalvelut / Web services).</p>
+
+<p><strong>Details for TutkaUI WFS service</strong></p>
+
+<table border="1" cellpadding="1" cellspacing="1" height="446" id="yui_patched_v3_11_0_1_1430819941932_826" width="680">
+	<tbody id="yui_patched_v3_11_0_1_1430819941932_825">
+		<tr id="yui_patched_v3_11_0_1_1430819941932_824">
+			<td id="yui_patched_v3_11_0_1_1430819941932_823"><strong id="yui_patched_v3_11_0_1_1430819941932_822">WFS URL</strong></td>
+			<td>http://avaa.tdata.fi/geoserver/pathway/wfs?</td>
+		</tr>
+		<tr>
+			<td><strong>Coordinate system</strong></td>
+			<td>Default: WGS-84 (EPSG: 4326), when required all else using EPSG-code</td>
+		</tr>
+		<tr>
+			<td>
+			<p><strong>Layers</strong></p>
+			</td>
+			<td>
+			<ul>
+				<li>hclass tables (precipitation type data), one table for each radar station and measuring angle, in format:
+				<ul>
+					<li>pathway:hclass_[radarStation]_[measuringAngle]</li>
+					<li>only some of the combinations of hclass and z are available, please check details from <a href="https://avaa.tdata.fi/geoserver/web/?x=n0KleMLkUxu4t*MAlQocUW3Ep2q25kX3or5IohmH6gGXBmjdcazT7oQvVJyEgPawI93aVEdPmL4">here</a></li>
+				</ul>
+				</li>
+				<li>z tables (precipitation type data), one table for each radar station and measuring angle, in format:
+				<ul>
+					<li>pathway:hclass_[radarStation]_[measuringAngle]</li>
+				</ul>
+				</li>
+				<li>pathway:lightnings</li>
+			</ul>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>radarStation</strong></td>
+			<td>
+			<ul>
+				<li>anj = Kouvola</li>
+				<li>ika = Ikaalinen</li>
+				<li>kor = Korpoo</li>
+				<li>kuo = Kuopio</li>
+				<li>luo = Luosto</li>
+				<li>uta = Utajärvi</li>
+				<li>van = Vantaa</li>
+				<li>vim = Vimpeli</li>
+			</ul>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>measuringAngle</strong></td>
+			<td>
+			<ul>
+				<li>0_1</li>
+				<li>0_3</li>
+				<li>0_5</li>
+				<li>0_7</li>
+				<li>1_5</li>
+			</ul>
+			</td>
+		</tr>
+		<tr>
+			<td><strong>Output formats</strong></td>
+			<td>
+			<ul>
+				<li>outputformat=
+				<ul>
+					<li>SHAPE-ZIP</li>
+					<li>csv</li>
+					<li>GML2</li>
+					<li><span class="pre" style="">GML3 </span></li>
+					<li><span class="pre" style="">application/json (geojson) </span></li>
+					<li><span class="pre" style="">text/javascript</span></li>
+				</ul>
+				</li>
+			</ul>
+			<a href="http://docs.geoserver.org/latest/en/user/services/wfs/outputformats.html" target="_blank">Additional information</a></td>
+		</tr>
+		<tr>
+			<td><strong>Limitations</strong></td>
+			<td>Max 100 000 polygons with one query.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+<p><strong>Example</strong></p>
+
+<p>In this example is downloaded:</p>
+
+<ul>
+	<li>Precipitation type data for Vantaa, measuring angle is 0.7 (&lt;wfs:Query typeName='pathway:z_van_0_7'&gt;)</li>
+	<li>Only specific clouds are selected (&nbsp;&lt;ogc:Filter&gt;..)
+	<ul>
+		<li>clouds have been recorded (data_time) is between: 1.06.2014 00:00 and 3.06.2014 23:59</li>
+		<li>area (areal) is bigger than 0,5 square kilometers</li>
+		<li>only clouds from a specific geographic area are selected (&lt;ogc:BBOX&gt;...)</li>
+		<li>only clouds with intensity (dbz_limits) over 45 dbz are selected</li>
+	</ul>
+	</li>
+	<li>No data format or coordinate system is specified, so defaults will be used: WGS-84 and GML</li>
+	<li>This is a POST request, because so complicated (time between) is possible only this way. Simpler request may be done also using GET.</li>
+</ul>
+
+<pre>
+&lt;wfs:GetFeature xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:gml='http://www.opengis.net/gml' xmlns:wfs='http://www.opengis.net/wfs' xmlns:ogc='http://www.opengis.net/ogc' service='WFS' version='1.0.0'
+&nbsp;&nbsp;&nbsp; xsi:schemaLocation='http://www.opengis.net/wfs'&gt;
+&nbsp;&nbsp;&nbsp; &lt;wfs:Query typeName='pathway:z_van_0_7'&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:Filter&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:And&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:PropertyIsGreaterThanOrEqualTo&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;ogc:PropertyName&gt;data_time&lt;/ogc:PropertyName&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;ogc:Literal&gt;2014-06-01T00:00:00Z&lt;/ogc:Literal&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ogc:PropertyIsGreaterThanOrEqualTo&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:PropertyIsLessThanOrEqualTo&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;ogc:PropertyName&gt;data_time&lt;/ogc:PropertyName&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:Literal&gt;2014-06-03T23:59:59Z&lt;/ogc:Literal&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ogc:PropertyIsLessThanOrEqualTo&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:PropertyIsGreaterThanOrEqualTo&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:PropertyName&gt;areal&lt;/ogc:PropertyName&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:Literal&gt;0.5&lt;/ogc:Literal&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ogc:PropertyIsGreaterThanOrEqualTo&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:BBOX&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:PropertyName&gt;refl&lt;/ogc:PropertyName&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;gml:Box&gt;
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;gml:coordinates&gt;22.891460968600388,59.37322296345692 26.846539093600388,61.14402299216982&lt;/gml:coordinates&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/gml:Box&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ogc:BBOX&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:PropertyIsEqualTo&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:PropertyName&gt;dbz_limits&lt;/ogc:PropertyName&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ogc:Literal&gt;45_90&lt;/ogc:Literal&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ogc:PropertyIsEqualTo&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ogc:And&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ogc:Filter&gt;
+&nbsp;&nbsp;&nbsp; &lt;/wfs:Query&gt;
+&lt;/wfs:GetFeature&gt;
+</pre>
+

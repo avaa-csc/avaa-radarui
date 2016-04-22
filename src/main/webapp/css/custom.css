@@ -1,0 +1,97 @@
+.query-button {
+	margin-top: 20px;
+}
+
+.step-back-btn {
+	margin-right: 20px;
+}
+
+.step-forward-btn {
+	margin-left: 20px;
+}
+
+.v-slot-result-container {
+	margin-top: 15px;
+}
+
+.rewind-video-btn {
+	margin-top: 30px;
+	margin-right: 20px;
+}
+
+.play-video-btn {
+	margin-top: 30px;
+	margin-left: 20px;
+}
+
+.v-slot-salama-control-checkbox {
+	margin-top: 20px;
+}
+
+.hide-for-video-play {
+	display: none !important;
+}
+
+.intensity-option-container .v-select-option label .v-icon {
+	float: right;
+}
+
+.intensity-option-container .v-select-option:nth-child(2) label .v-icon {
+	color: rgb(225,232,255);
+}
+
+.intensity-option-container .v-select-option:nth-child(3) label .v-icon {
+	color: rgb(163,183,255);
+}
+
+.intensity-option-container .v-select-option:nth-child(4) label .v-icon {
+	color: rgb(83,119,255);
+}
+
+.intensity-option-container .v-select-option:nth-child(5) label .v-icon {
+	color: rgb(18,67,255);
+}
+
+.type-option-container  .v-select-option label .v-icon {
+	float: right;
+}
+
+.type-option-container .v-select-option:nth-child(1) label .v-icon {
+	color: rgb(0,150,140);
+}
+
+.type-option-container .v-select-option:nth-child(2) label .v-icon {
+	color: rgb(0,0,100);
+}
+
+.type-option-container .v-select-option:nth-child(3) label .v-icon {
+	color: rgb(55,10,140);
+}
+
+.type-option-container .v-select-option:nth-child(4) label .v-icon {
+	margin: 0px -14px 0 3px;
+}
+
+.v-datefield-query-enddate, .v-datefield-query-startdate {
+	width: 190px !important;
+}
+
+.v-caption-query-enddate, .v-datefield-query-enddate {
+	margin-left: 30px;
+}
+
+.parameter-middle-column {
+	margin-left: 30px;
+}
+
+.parameter-right-column {
+	margin-left: 30px;
+}
+
+.map-control-container {
+	margin-top: 10px;
+}
+
+.ol-attribution ul {
+	max-width: none !important;
+}

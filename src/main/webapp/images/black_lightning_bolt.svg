@@ -1,0 +1,12 @@
+<?xml version="1.0"?><svg width="800" height="800" xmlns="http://www.w3.org/2000/svg">
+ <title>Lightning Bolt</title>
+ <defs>
+  <filter id="path4828_blur">
+   <feGaussianBlur stdDeviation="0.1"/>
+  </filter>
+ </defs>
+ <g>
+  <title>Layer 1</title>
+  <path filter="url(#path4828_blur)" d="m468.500641,166.19635l-188.962006,187.627686l101.856171,3.466522l-161.61116,156.538605l68.451309,1.244568l-113.422272,122.125732l274.060059,-148.967194l-102.017273,1.048737l206.503723,-160.71405l-111.701843,-0.268127l183.529968,-167.111206l-156.686676,5.008728z" stroke-width="5" stroke="#191919" fill-rule="evenodd" fill="#000000" id="path4828"/>
+ </g>
+</svg>
