@@ -43,12 +43,12 @@ public class PolygonParser {
 					lat = Double.parseDouble(pisteet[i]); 
 					lon = Double.parseDouble(pisteet[i+1]);
 					points.add(new OLCoordinate(lat, lon)); //(x, y)
-				} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+				} catch (ArrayIndexOutOfBoundsException e) {
 					System.err.println(e.getMessage());
 					System.err.println(text);
 				}
 			}
-		} catch (java.lang.StringIndexOutOfBoundsException e) {
+		} catch (StringIndexOutOfBoundsException e) {
 			System.err.println(e.getMessage());
 			System.err.println(text);	
 		}

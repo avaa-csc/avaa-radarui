@@ -19,19 +19,14 @@ import java.io.Serializable;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 import org.vaadin.addon.vol3.OLMap;
 import org.vaadin.addon.vol3.OLMapOptions;
 import org.vaadin.addon.vol3.OLView;
 import org.vaadin.addon.vol3.OLViewOptions;
 import org.vaadin.addon.vol3.client.OLCoordinate;
-import org.vaadin.addon.vol3.client.source.OLMapQuestLayerName;
+import org.vaadin.addon.vol3.client.control.OLAttributionControl;
 import org.vaadin.addon.vol3.client.style.OLFillStyle;
 import org.vaadin.addon.vol3.client.style.OLIconStyle;
 import org.vaadin.addon.vol3.client.style.OLStrokeStyle;
@@ -41,8 +36,7 @@ import org.vaadin.addon.vol3.feature.OLPoint;
 import org.vaadin.addon.vol3.feature.OLPolygon;
 import org.vaadin.addon.vol3.layer.OLTileLayer;
 import org.vaadin.addon.vol3.layer.OLVectorLayer;
-import org.vaadin.addon.vol3.source.OLMapQuestSource;
-import org.vaadin.addon.vol3.source.OLVectorSource;
+import org.vaadin.addon.vol3.source.*;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -103,7 +97,6 @@ public class OLmap implements Serializable /*, Runnable */ {
 	 * @param kulma OptionGroup		Tutkan käyttämän kulman valinta
 	 * @param tyyppi OptionGroup	Sateen tyyppi, vesi tai rae
 	 * @param minArea OptionGroup	Sateen pinta-ala
-	 * @param name String			Portti, jossa ohjelmaa ajava tomcat pyörii + tämän portletin nimi
 	 */
 	OLmap(Label aika, OptionGroup tutkat, OptionGroup kulma, OptionGroup tyyppi, OptionGroup minArea, OptionGroup intensiteetti, CheckBox salamaOption, OptionGroup typeOrIntensity) {	
 		this.time = aika;
@@ -114,7 +107,7 @@ public class OLmap implements Serializable /*, Runnable */ {
 		this.intensiteetti = intensiteetti;
 		this.typeOrIntensity = typeOrIntensity;
 		this.salamaOption = salamaOption;
-		this.layerList = new ArrayList<OLVectorLayer>();
+		this.layerList = new ArrayList<>();
 		this.timeserieBorders = new Stack();
 		this.lastIndex = 0;
 		this.index = 0;
@@ -216,7 +209,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 			OLCoordinate[] extent = null;
 			try {
 				extent = createExtent(olv);
-			} catch (java.lang.NullPointerException e) {
+			} catch (NullPointerException e) {
 				log.fatal(e.toString() + e.getMessage());
 				log.fatal(olv.getHeight());
 				log.fatal(Tutkat.SIJAINNIT[t].toString());
@@ -360,7 +353,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 				try {
 					this.timeserieBorders.pop();
 					this.index = (int)this.timeserieBorders.peek();
-				} catch (java.util.EmptyStackException e) {
+				} catch (EmptyStackException e) {
 					lastSuunta = suunta;
 					this.index = 0;
 					return true;
@@ -383,7 +376,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 				try {
 					this.index = (int)this.timeserieBorders.pop();
 					this.lastIndex = this.index;
-				} catch (java.util.EmptyStackException e) {
+				} catch (EmptyStackException e) {
 					lastSuunta = suunta;
 					return true;
 				}
@@ -402,7 +395,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 					loppu = true;
 				}
 			}
-		} catch (java.lang.IndexOutOfBoundsException e) {
+		} catch (IndexOutOfBoundsException e) {
 			loppu = true;
 		}
 
@@ -479,7 +472,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 				if (this.index > this.resultList.size()-1)
 					return true;
 			}
-		} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+		} catch (ArrayIndexOutOfBoundsException e) {
 			return true;
 		}
 		return false;
@@ -535,7 +528,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 				if (this.index > this.resultList.size()-1)
 					return true;
 			}
-		} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+		} catch (ArrayIndexOutOfBoundsException e) {
 			return true;
 		}
 		return false;
@@ -593,7 +586,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 		OLViewOptions options=new OLViewOptions();
 		options.setMinZoom(MINZOOM);
 		OLView olv = new OLView(options);
-		olv.setZoom(MINZOOM);	
+		olv.setZoom(MINZOOM);
 		olv.setCenter(2749591.42, 9598632.29);		
 		//olv.setCenter(new OLCoordinate(24.7, 64.963));
 		
@@ -602,10 +595,16 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 		
 		olMap = new OLMap(mapOptions);
 		olMap.setView(olv);
-		
-		OLMapQuestSource OSM = new OLMapQuestSource(OLMapQuestLayerName.OSM);
-		olMap.addLayer(new OLTileLayer(OSM));	
-		
+		OLTileWMSSourceOptions srcOpts = new OLTileWMSSourceOptions();
+		Map<String, String> params = new HashMap<>();
+		params.put("LAYERS", "osm-finland");
+		params.put("VERSION", "1.1.0");
+		srcOpts.setParams(params);
+		srcOpts.setUrl("http://avaa.tdata.fi/geoserver/osm_finland/gwc/service/wms");
+		srcOpts.setAttributions(new String[]{"&copy; <a target=\"_blank\" href=\"http://avaa.tdata.fi/openstreetmap\">OKM AVAA</a>. Data: &copy; <a target=\"_blank\" href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap contributors</a>"});
+		OLTileWMSSource OSM = new OLTileWMSSource(srcOpts);
+		olMap.addLayer(new OLTileLayer(OSM));
+
 		olMap.setWidth(MAPLEVEYS, Sizeable.Unit.PIXELS);
 		olMap.setHeight(MAPKORKEUS, Sizeable.Unit.PIXELS);
 		
@@ -615,7 +614,7 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 	private OLCoordinate[] createExtent(OLView olv) {
 		
 		OLCoordinate center = olv.getCenter();
-		log.debug("center " + center.toText());
+		log.debug("center " + center.toString());
 
 		Double resolution = olv.getResolution();
 		log.debug("resolution: " + String.valueOf(resolution));
@@ -639,8 +638,8 @@ private String encodeFilter(String table, Date start, Date end, OLCoordinate[] e
 		OLCoordinate d_p1 = EPSG900913_WGS84Datum(p1);
 		OLCoordinate d_p3 = EPSG900913_WGS84Datum(p3);
 
-		log.debug("d p1 " + d_p1.toText());
-		log.debug("d p3 " + d_p3.toText());
+		log.debug("d p1 " + d_p1.toString());
+		log.debug("d p3 " + d_p3.toString());
 		
 		OLCoordinate[] extent = new OLCoordinate[2];
 		extent[0] = d_p1;
